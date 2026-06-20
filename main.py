@@ -65,7 +65,7 @@ if "current_product" in st.session_state:
         st.write("### Healthier Alternatives")
         st.write(alternatives)
 
-    if st.button("Save to Food Log"):
+if st.button("Save to Food Log"):
         log.save_product(product.to_dict())
         st.success("Saved!")
 # Show saved log
