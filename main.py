@@ -17,31 +17,34 @@ search_input = st.text_input("Enter a barcode (numbers only) or product name:")
 if st.button("Search"):
     try:
         if search_input.isdigit():
+            # st.write(f"DEBUG: searching for '{search_input}'")  i encountered a problem so i used this for debugging
             raw_data = client.fetch_by_barcode(search_input)
         else:
             result = client.search_by_name(search_input)
             raw_data = result["product"]
 
         product = FoodProduct(raw_data)
-        st.session_state["current_product"] = product   # <-- store it
+        st.session_state["current_product"] = product
 
+        st.success(f"Found: {product.name} ({product.brand})")
+
+        # Show nutrients table
+        df = pd.DataFrame(product.nutrients.items(), columns=["Nutrient", "Value (per 100g)"])
+        st.dataframe(df)
+
+        # Show analysis
         analysis = analyzer.analyze_nutrition(product.nutrients)
+        #warnings = analyzer.get_warning(analysis)
         st.session_state["current_analysis"] = analysis
+       
 
     except ValueError as e:
         st.error(f"Error: {e}")
     except Exception as e:
         st.error(f"Something went wrong: {e}")
-
-# Display happens OUTSIDE the search button, using session_state
 if "current_product" in st.session_state:
     product = st.session_state["current_product"]
     analysis = st.session_state["current_analysis"]
-
-    st.success(f"Found: {product.name} ({product.brand})")
-
-    df = pd.DataFrame(product.nutrients.items(), columns=["Nutrient", "Value (per 100g)"])
-    st.dataframe(df)
 
     warnings = analyzer.get_warning(analysis)
     if warnings:
@@ -62,11 +65,10 @@ if "current_product" in st.session_state:
         st.write("### Healthier Alternatives")
         st.write(alternatives)
 
-    # Save button is now OUTSIDE the search block, sibling-level
     if st.button("Save to Food Log"):
         log.save_product(product.to_dict())
         st.success("Saved!")
-
+# Show saved log
 st.write("---")
 st.write("## Your Food Log")
 saved = log.load_all()
