@@ -14,10 +14,11 @@ class FoodLog:
                 json.dump([], f)  # Initialize with an empty list
 
     def load_all(self):
-        try :
+        try:
             with open(self.filepath, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
+                data = json.load(f)
+                return data if isinstance(data, list) else []
+        except (FileNotFoundError, json.JSONDecodeError):
             return []
         
     def save_product(self, product_dict):
