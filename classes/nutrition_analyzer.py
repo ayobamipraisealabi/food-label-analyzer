@@ -1,10 +1,10 @@
 class NutritionAnalyzer:
     THRESHOLDS={
-        "sugar": {"low": 5, "high": 22.5},
+        "sugars": {"low": 5, "high": 22.5},
         "salt": {"low": 0.3, "high": 1.5},
         "saturated_fat": {"low": 1.5, "high": 5},
         "fat": {"low": 3, "high": 17.5},
-        "calories": {"low": 100, "high": 400}
+        "energy_kcal": {"low": 100, "high": 400}
     }
 
     def analyze_nutrition(self, nutrients) -> dict:

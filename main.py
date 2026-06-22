@@ -74,6 +74,10 @@ st.write("## Your Food Log")
 saved = log.load_all()
 if saved:
     log_df = pd.DataFrame(saved)
+    # Flatten nested 'nutrients' dict if present
+    if "nutrients" in log_df.columns:
+        nutrients_df = pd.json_normalize(saved)
+        log_df = nutrients_df
     st.dataframe(log_df)
 else:
     st.write("No products saved yet.")
